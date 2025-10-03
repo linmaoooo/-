@@ -1,0 +1,365 @@
+:root{
+  --bg:#fdecb2;
+  --card:#bfe0ff;
+  --card-active:#9fcaff;
+  --text:#333;
+  --title:#222;
+  --radius:18px;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family: system-ui, -apple-system, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", Arial, sans-serif;
+  line-height:1.5;
+}
+
+.page{ padding:3rem 1rem 3rem; max-width:980px; margin:auto; }
+.hero{ text-align:center; margin-bottom:1rem; }
+.title{ font-size:clamp(28px,5vw,56px); margin:0 0 .4rem; color:var(--title);}
+.subtitle{ margin:0; font-size:clamp(15px,2.2vw,20px); color:#555; }
+
+.controls{
+  display:flex; gap:1rem; align-items:center; justify-content:center;
+  margin:.8rem auto 1.2rem;
+}
+.leftinfo{ font-size:14px; color:#555; }
+
+.btn{
+  border:0; padding:.6rem 1rem; border-radius:12px; background:#eee; cursor:pointer; font-size:16px;
+}
+.btn.primary{ background:#2b7bff; color:#fff; }
+.btn:disabled{ opacity:.6; cursor:not-allowed; }
+
+.board{
+  margin:0 auto;
+  display:grid;
+  grid-template-columns: repeat(3, minmax(200px, 1fr));
+  gap: clamp(14px, 3.2vw, 26px);
+  max-width:720px;
+  padding: .5rem;
+}
+
+/* 卡片（可翻面） */
+.card{
+  position:relative;
+  width:100%;
+  aspect-ratio:1/1;
+  perspective: 1000px; /* 3D 翻牌 */
+}
+.cardInner{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  transition: transform .5s ease;
+  border-radius:var(--radius);
+  box-shadow: 0 4px 14px rgba(0,0,0,.12);
+}
+.card.flipped .cardInner{ transform: rotateY(180deg); }
+
+.face{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  backface-visibility:hidden;
+  border-radius:var(--radius);
+}
+.face.back{
+  background:linear-gradient(135deg, var(--card), var(--card-active));
+  color:#134;
+  font-weight:700;
+  font-size: clamp(20px, 4.5vw, 28px);
+  letter-spacing:.08em;
+}
+.face.front{
+  background:#fff;
+  border:3px solid var(--card-active);
+  transform: rotateY(180deg);
+  padding:.8rem;
+  text-align:center;
+}
+.prizeName{
+  font-size: clamp(18px, 4.5vw, 30px);
+  font-weight: 800;
+}
+.prizeMeta{
+  margin-top:.2rem; font-size: clamp(12px, 2.7vw, 14px); color:#666;
+}
+
+/* 洗牌動畫：卡片微抖+閃爍 */
+.shuffling .cardInner{
+  animation: jiggle .35s ease infinite;
+}
+@keyframes jiggle{
+  0%{ transform: translateZ(0) rotate(0deg); }
+  25%{ transform: translateY(-3px) rotate(-1.5deg); }
+  50%{ transform: translateY(2px) rotate(1.2deg); }
+  75%{ transform: translateY(-2px) rotate(-1deg); }
+  100%{ transform: translateZ(0) rotate(0deg); }
+}
+.card.flash .face.back{ animation: flash 0.75s ease-in-out infinite; }
+@keyframes flash{
+  0%,100%{ filter:brightness(1); }
+  50%{ filter:brightness(1.2); }
+}
+
+/* 小螢幕允許卷軸，避免縮到看不到 */
+@media (max-height:640px){
+  .page{ padding-top:2rem; }
+}
+
+/* 對話框 */
+.dialog{
+  border:0;
+  padding:1rem 1.2rem 1rem;
+  border-radius:16px;
+  max-width:480px;
+}
+dialog::backdrop{ background: rgba(0,0,0,.25); }
+.dialog h3{ margin:0 0 .4rem; }
+.dialog-actions{ text-align:right; margin-top:.6rem; }
+
+/* 兩欄佈局：左棋盤 + 右清單 */
+.content{
+  display:grid;
+  grid-template-columns: 1fr 280px;
+  gap: 24px;
+  align-items:start;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.inventory{
+  background:#fff;
+  border:1px solid #e8eef7;
+  border-radius:16px;
+  padding:14px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.06);
+}
+.inventory h3{
+  margin:0 0 .25rem; font-size:18px;
+}
+.inv-meta{
+  font-size:13px; color:#666; margin-bottom:.5rem;
+}
+.inv-table{
+  width:100%; border-collapse:collapse; font-size:14px;
+}
+.inv-table th, .inv-table td{
+  border-bottom:1px solid #f0f3f8; padding:.5rem .25rem; text-align:left;
+}
+.inv-table th:nth-child(2), .inv-table td:nth-child(2){
+  text-align:right; width:72px;
+}
+
+/* 手機直排 */
+@media (max-width: 860px){
+  .content{ grid-template-columns: 1fr; }
+}
+
+/* 更寬一點的對話框 */
+.dialog-wide{
+  max-width: 760px;
+  width: calc(100% - 2rem);
+}
+
+/* 紀錄表格 */
+.history-actions{
+  display:flex; gap:.5rem; justify-content:flex-end; margin:.25rem 0 .5rem;
+}
+.history-wrap{
+  max-height: 60vh; overflow:auto; border:1px solid #eef2f7; border-radius:12px;
+}
+.history-table{
+  width:100%; border-collapse:collapse; font-size:14px; background:#fff;
+}
+.history-table th, .history-table td{
+  border-bottom:1px solid #f1f4f8; padding:.5rem .6rem; text-align:left;
+}
+.history-table td:last-child, .history-table th:last-child{
+  text-align:right;
+}
+
+/* 洗牌動畫時關閉點擊，避免誤觸 */
+.board.animating { pointer-events: none; }
+.card { will-change: transform; }
+
+/* 卡片在洗牌時會做 transform，所以先宣告以啟用更順的合成層 */
+.card {
+  will-change: transform;
+}
+
+/* 去掉卡片外的黑色邊框與灰底（按鈕原生樣式） */
+.card {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent; /* 移除手機點擊高亮 */
+}
+.card:focus,
+.card:focus-visible,
+.card:active {
+  outline: none;
+  box-shadow: none;
+}
+
+/* === 抽獎結果浮動視窗 === */
+.modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 9999; }
+.modal.open { display: flex; }
+.modal__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.55); }
+
+.modal__panel {
+  position: relative;
+  background: #fff;
+  width: min(92vw, 520px);
+  max-height: 90vh;
+  overflow: auto;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal__name {
+  width: 100%;
+  text-align: center;
+  font-weight: 800;
+  /* 大小會隨螢幕略縮放：最小24px，最大40px */
+  font-size: clamp(24px, 3.6vw, 40px);
+  line-height: 1.2;
+  word-break: break-word;
+  margin-top: 4px;
+}
+
+.modal__imgWrap { margin: 8px 0 4px; text-align: center; width: 100%; }
+.modal__imgWrap img {
+  max-width: 100%;
+  max-height: 48vh;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.modal__btnRow { display: flex; justify-content: center; gap: 12px; margin-top: 4px; }
+body.modal-open { overflow: hidden; }
+
+/* === Modal 開啟動畫：由中心小→大 === */
+/* 初始狀態（尚未 open） */
+.modal__panel {
+  transform-origin: center center;
+  transform: scale(0.9);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* 加上 .open 時播放彈出動畫 */
+.modal.open .modal__panel {
+  animation: modalPopIn 280ms cubic-bezier(.2,.8,.2,1) forwards;
+}
+
+/* 背景淡入（可選） */
+.modal__backdrop { opacity: 0; }
+.modal.open .modal__backdrop {
+  animation: backdropFadeIn 240ms ease forwards;
+}
+
+/* 動畫關鍵影格：小→略大→回 1（微彈跳） */
+@keyframes modalPopIn {
+  0%   { transform: scale(0.82); opacity: 0; }
+  60%  { transform: scale(1.03); opacity: 1; }
+  100% { transform: scale(1.00); opacity: 1; }
+}
+
+@keyframes backdropFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 無障礙：使用者偏好減少動態時停用動畫 */
+@media (prefers-reduced-motion: reduce) {
+  .modal__panel,
+  .modal.open .modal__panel,
+  .modal__backdrop,
+  .modal.open .modal__backdrop {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* 抽獎紀錄標題列：左右排 */
+.historyHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+/* 危險動作按鈕 */
+.btn--danger {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn--danger:hover { filter: brightness(0.95); }
+.btn--danger:disabled { opacity: .5; cursor: not-allowed; }
+
+/* === 固定背景（不隨頁面滾動）=== */
+html, body {
+  min-height: 100%;
+  background: transparent !important; /* 覆蓋舊的 body 背景 */
+}
+
+body {
+  position: relative;
+}
+
+/* 用固定定位的偽元素當背景層，iPad/Safari 也穩定 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;                 /* top:0; right:0; bottom:0; left:0 */
+  z-index: -1;              /* 在內容下方 */
+  pointer-events: none;     /* 不阻擋操作 */
+  background-image: url("./img/九宮格抽獎_背景圖.png");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;   /* 等比鋪滿 */
+  /* 下面兩行幫忙避免某些瀏覽器滾動時抖動 */
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* 若你的主要容器本來有白底，想讓背景透出，可視需要開啟 */
+.main, .container, .wrapper, .board {
+  background: transparent !important;
+}
+
+/* 標題圖片置中與響應式尺寸 */
+.site-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 12px 0 16px;
+}
+.site-title img {
+  display: block;
+  height: clamp(48px, 12vw, 120px); /* 依螢幕自適應高度 */
+  width: auto;
+}
+
+/* 讓主容器透明（如需） */
+.main, .container, .wrapper, .board {
+  background: transparent !important;
+}

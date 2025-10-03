@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>九宮格抽獎</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- PWA: manifest & theme -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#000000">
+
+  <!-- iOS 安裝到主畫面時，啟用全螢幕與狀態列樣式 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <link rel="apple-touch-icon" href="./img/icon-192.png">
+
+  <!-- iPhone Retina（也常被 iPad 使用）-->
+  <link rel="apple-touch-icon" sizes="180x180" href="./img/icon-180.png">
+  <!-- iPad Pro -->
+  <link rel="apple-touch-icon" sizes="167x167" href="./img/icon-167.png">
+  <!-- iPad / iPad mini（老機型相容）-->
+  <link rel="apple-touch-icon" sizes="152x152" href="./img/icon-152.png">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <h1 id="siteTitle" class="site-title">
+        <img src="./img/九宮格抽獎_標題.png" alt="九宮格抽獎">
+      </h1>
+      <p class="subtitle"></p>
+    </header>
+
+    <section class="controls">
+      <button id="historyBtn" class="btn">抽獎紀錄</button>
+      <span id="leftInfo" class="leftinfo"></span>
+    </section>
+
+    <!-- 兩欄：左邊棋盤、右邊清單 -->
+    <section class="content">
+      <section class="board" id="board" aria-label="九宮格抽獎"></section>
+
+      <aside class="inventory">
+        <h3>剩餘獎項</h3>
+        <div class="inv-meta" id="invSummary">—</div>
+        <table class="inv-table">
+          <thead>
+            <tr><th>獎項名稱</th><th>剩餘</th></tr>
+          </thead>
+          <tbody id="invBody"><tr><td colspan="2">載入中…</td></tr></tbody>
+        </table>
+      </aside>
+    </section>
+
+    <footer class="footnote"></footer>
+  </main>
+
+  <!-- 結果對話框 -->
+  <dialog id="resultDlg" class="dialog">
+    <h3>抽獎結果</h3>
+    <p id="resultText">—</p>
+    <div class="dialog-actions">
+      <button id="closeDlgBtn" class="btn primary">好</button>
+    </div>
+  </dialog>
+
+  <!-- 抽獎紀錄視窗 -->
+
+  <dialog id="historyDlg" class="dialog dialog-wide">
+ 
+    <h3>抽獎紀錄</h3>
+  
+    <div class="history-actions">
+        <button id="exportCsvBtn" class="btn primary">匯出 Excel（CSV）</button>
+        <button id="closeHistoryBtn" class="btn">關閉</button>
+    </div>
+    <div class="history-wrap">
+    <table class="history-table">
+      <thead>
+        <tr>
+          <th style="width: 180px;">時間</th>
+          <th>獎項</th>
+          <th style="width: 90px; text-align:right;">抽後剩餘</th>
+          <th style="width: 120px; text-align:right;">操作</th>
+        </tr>
+      </thead>
+      <tbody id="historyBody">
+        <tr><td colspan="3">目前沒有紀錄</td></tr>
+      </tbody>
+    </table>
+    <div class="historyHeader">
+      <button id="clearHistoryBtn" class="btn btn--danger" disabled>清除紀錄</button>
+    </div>
+    </div>
+  </dialog>
+
+  <!-- 抽獎結果浮動視窗 -->
+  <div id="resultModal" class="modal" role="dialog" aria-modal="true" aria-label="抽獎結果">
+  <div class="modal__backdrop"></div>
+  <div class="modal__panel">
+    <div id="modalPrizeName" class="modal__name">—</div>
+
+    <div id="modalImgWrap" class="modal__imgWrap" style="display:none;">
+      <img id="modalPrizeImage" alt="" />
+    </div>
+
+    <div class="modal__btnRow">
+      <button id="modalOkBtn" type="button" class="btn">確定</button>
+    </div>
+  </div>
+  </div>
+
+  <script src="app.js" defer></script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    // sw.js 與 index.html 同資料夾（主程式/）
+    navigator.serviceWorker.register('./sw.js').catch(console.error);
+  }
+</script>
+
+</body>
+</html>
